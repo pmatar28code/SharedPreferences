@@ -17,9 +17,9 @@ class MainActivity : AppCompatActivity() {
         var keyStringAccesskey = "Access_key"
         var gson = Gson()
         var jsonAccessKey = gson.toJson(accessKey)
-        var myEncryptedSharedPreferences = EncSharedPreferences.encryptedSharedPreferencesInstance(applicationContext)
-        EncSharedPreferences.saveToSharedPrefs(applicationContext,keyStringAccesskey,jsonAccessKey)
-        var returnedStringFromEncSharedPrefs = EncSharedPreferences.getValueString(applicationContext,keyStringAccesskey)
+        var myEncryptedSharedPreferences = EncSharedPreferences.encryptedSharedPreferencesInstance()
+        EncSharedPreferences.saveToSharedPrefs(keyStringAccesskey,jsonAccessKey)
+        var returnedStringFromEncSharedPrefs = EncSharedPreferences.getValueString(keyStringAccesskey)
         Log.e("RETURNED STRING FROM ENC SHARED PREFS ","$returnedStringFromEncSharedPrefs")
         var jsonObjectAccessKey = gson.fromJson(returnedStringFromEncSharedPrefs,TestClass::class.java)
         Log.e("STRING FROM ENC SHARED PREFS TO OBJECT","$jsonObjectAccessKey")

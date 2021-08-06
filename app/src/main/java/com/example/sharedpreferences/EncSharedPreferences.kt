@@ -1,6 +1,5 @@
 package com.example.sharedpreferences
 
-import android.content.Context
 import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
@@ -10,33 +9,35 @@ class EncSharedPreferences {
     private val keyGenParameterSpec = MasterKeys.AES256_GCM_SPEC
     private val masterKeyAlias = MasterKeys.getOrCreate(keyGenParameterSpec)
     private var INSTANCE : SharedPreferences ?= null
-    //private var applicationContext = Utility.getAppContext()
+    private var applicationContext = Utility.getInstance()?.applicationContext
 
-        fun encryptedSharedPreferencesInstance(applicationContext: Context):SharedPreferences {
+        fun encryptedSharedPreferencesInstance(): SharedPreferences? {
             var instance = INSTANCE
             if (instance == null) {
-                instance = EncryptedSharedPreferences.create(
-                    "shared_preferences_filename",
-                    masterKeyAlias,
-                    applicationContext,
-                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-                )
+                instance = applicationContext?.let {
+                    EncryptedSharedPreferences.create(
+                        "shared_preferences_filename",
+                        masterKeyAlias,
+                        it,
+                        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+                    )
+                }
                 INSTANCE = instance
             }
             return instance
         }
 
-        fun saveToSharedPrefs(applicationContext: Context,KEY_NAME: String, value: String) {
-            val encSharedPreferences = encryptedSharedPreferencesInstance(applicationContext)
-            val editor = encSharedPreferences.edit()
-            editor.putString(KEY_NAME, value)
-            editor.apply()
+        fun saveToSharedPrefs(KEY_NAME: String, value: String) {
+            val encSharedPreferences = encryptedSharedPreferencesInstance()
+            val editor = encSharedPreferences?.edit()
+            editor?.putString(KEY_NAME, value)
+            editor?.apply()
         }
 
-        fun getValueString(applicationContext: Context,KEY_NAME: String): String? {
-            val encSharedPreferences = encryptedSharedPreferencesInstance(applicationContext)
-            return encSharedPreferences.getString(KEY_NAME, null)
+        fun getValueString(KEY_NAME: String): String? {
+            val encSharedPreferences = encryptedSharedPreferencesInstance()
+            return encSharedPreferences?.getString(KEY_NAME, null)
         }
     }
 }
