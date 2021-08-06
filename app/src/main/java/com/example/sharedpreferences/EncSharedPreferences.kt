@@ -3,6 +3,7 @@ package com.example.sharedpreferences
 import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
+import com.google.gson.Gson
 
 class EncSharedPreferences {
     companion object{
@@ -28,7 +29,7 @@ class EncSharedPreferences {
             return instance
         }
 
-        fun saveToSharedPrefs(KEY_NAME: String, value: String) {
+        fun saveToEncryptedSharedPrefsString(KEY_NAME: String, value: String) {
             val encSharedPreferences = encryptedSharedPreferencesInstance()
             val editor = encSharedPreferences?.edit()
             editor?.putString(KEY_NAME, value)
@@ -38,6 +39,30 @@ class EncSharedPreferences {
         fun getValueString(KEY_NAME: String): String? {
             val encSharedPreferences = encryptedSharedPreferencesInstance()
             return encSharedPreferences?.getString(KEY_NAME, null)
+        }
+
+        fun convertTestClassToJsonString(classObj:TestClass):String{
+            var gson = Gson()
+            return gson.toJson(classObj)
+        }
+
+        fun convertJsonStringToTestClass(stringObj:String):TestClass{
+            var gson = Gson()
+            return gson.fromJson(stringObj,TestClass::class.java)
+        }
+
+        fun removeValueFromEncShareDPrefs(keyString: String) {
+            val encSharedPreferences = encryptedSharedPreferencesInstance()
+            val editor = encSharedPreferences?.edit()
+            editor?.remove(keyString)
+            editor?.apply()
+        }
+
+        fun clearSharedPreference() {
+            val encSharedPreferences = encryptedSharedPreferencesInstance()
+            val editor = encSharedPreferences?.edit()
+            editor?.clear()
+            editor?.commit()
         }
     }
 }
